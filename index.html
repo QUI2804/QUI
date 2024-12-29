@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuộc thi tìm hiểu lịch sử lực lượng vũ trang Quân khu 5</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #87CEEB; /* Màu nền da trời */
+            color: #333;
+        }
+        header {
+            background-color: #1E90FF; /* Màu xanh đậm */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        header img {
+            width: 100px; /* Kích thước logo */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #1E90FF;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logo.jpg" alt="Logo Quân khu 5" onerror="alert('Không tìm thấy logo, vui lòng kiểm tra tên file và đường dẫn!')">
+    <h1>Cuộc thi tìm hiểu lịch sử lực lượng vũ trang Quân khu 5</h1>
+</header>
+
+<div class="container mt-4">
+    <!-- Trang chủ -->
+    <div id="home">
+        <h2>Chào mừng bạn đến với cuộc thi</h2>
+        <p>Hãy tham gia để thử sức với những câu hỏi thú vị về lịch sử!</p>
+        <button class="btn btn-primary btn-lg" onclick="showRules()">Xem thể lệ</button>
+        <button class="btn btn-success btn-lg" onclick="showRegister()">Đăng ký tham gia</button>
+        <button class="btn btn-danger btn-lg" onclick="showAdminLogin()">Quản trị viên</button>
+    </div>
+
+    <!-- Thể lệ -->
+    <div id="rules" class="hidden">
+        <h3>Thể lệ cuộc thi</h3>
+        <ul>
+            <li>Mỗi người tham gia trả lời 15 câu hỏi (14 câu trắc nghiệm + 1 câu dự đoán).</li>
+            <li>Các câu hỏi được chọn ngẫu nhiên từ kho 50 câu hỏi.</li>
+            <li>Kết quả sẽ được hiển thị ngay sau khi nộp bài.</li>
+        </ul>
+        <button class="btn btn-secondary" onclick="goBack()">Quay lại</button>
+    </div>
+
+    <!-- Đăng ký -->
+    <div id="register" class="hidden">
+        <h3>Đăng ký tham gia</h3>
+        <form id="registerForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Họ và Tên</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="dob" class="form-label">Năm sinh</label>
+                <input type="number" class="form-control" id="dob" required>
+            </div>
+            <div class="mb-3">
+                <label for="unit" class="form-label">Đơn vị</label>
+                <input type="text" class="form-control" id="unit" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <input type="tel" class="form-control" id="phone" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Hoàn tất</button>
+        </form>
+        <button class="btn btn-secondary mt-3" onclick="goBack()">Quay lại</button>
+    </div>
+
+    <!-- Trang thi -->
+    <div id="quiz" class="hidden">
+        <h3>Bài thi</h3>
+        <form id="quizForm"></form>
+        <button class="btn btn-success mt-3" onclick="submitQuiz()">Nộp bài</button>
+        <button class="btn btn-secondary mt-3" onclick="goBack()">Quay lại</button>
+    </div>
+
+    <!-- Đăng nhập quản trị viên -->
+    <div id="adminLogin" class="hidden">
+        <h3>Đăng nhập Quản trị viên</h3>
+        <form id="adminLoginForm">
+            <div class="mb-3">
+                <label for="adminEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="adminEmail" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        </form>
+        <button class="btn btn-secondary mt-3" onclick="goBack()">Quay lại</button>
+    </div>
+
+    <!-- Thống kê -->
+    <div id="adminResults" class="hidden">
+        <h3>Thống kê kết quả</h3>
+        <button class="btn btn-success mb-3" onclick="exportToExcel()">Tải xuống Excel</button>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Họ và Tên</th>
+                    <th>Năm sinh</th>
+                    <th>Đơn vị</th>
+                    <th>Số điện thoại</th>
+                    <th>Số câu đúng</th>
+                    <th>Dự đoán</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable"></tbody>
+        </table>
+        <button class="btn btn-secondary" onclick="goBack()">Quay lại</button>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 - Cuộc thi "Tìm hiểu lịch sử lực lượng vũ trang Quân khu 5"</p>
+</footer>
+
+<script>
+    const questions = [
+        { id: 1, question: "Nhà nước đầu tiên của nước ta là gì?", options: ["Văn Lang", "Âu Lạc", "Việt Nam"], answer: "Văn Lang" },
+    { id: 2, question: "Vị vua đầu tiên của nước ta là ai?", options: ["An Dương Vương", "Vua Hùng Vương", "Bảo Đại"], answer: "Vua Hùng Vương" },
+    { id: 3, question: "Thành tựu đặc sắc về phong trào của người dân Âu Lạc là gì?", options: ["Chế tạo loại nỏ bắn nhiều mũi tên", "Xây dựng thành Cổ Loa", "Cả hai đều đúng"], answer: "Cả hai đều đúng" },
+    { id: 4, question: "Câu 'Triệu Đà đã hoãn binh, cho con trai làm rể An Dương Vương' gợi cho ta nhớ đến câu chuyện nào?", options: ["Mị Châu - Trọng Thủy", "Sơn Tinh - Thủy Tinh", "Thạch Sanh"], answer: "Mị Châu - Trọng Thủy" },
+    { id: 5, question: "Chiến thắng vang dội nhất trước triều đại phương Bắc là gì?", options: ["Chiến thắng Bạch Đằng", "Chiến thắng Hai Bà Trưng", "Chiến thắng Lí Bí"], answer: "Chiến thắng Bạch Đằng" },
+    { id: 6, question: "Khởi nghĩa của Hai Bà Trưng diễn ra năm nào?", options: ["179 TCN", "Năm 40", "Cuối năm 40"], answer: "Năm 40" },
+    { id: 7, question: "Ai là người lãnh đạo cuộc khởi nghĩa Bà Triệu?", options: ["Triệu Thị Trinh", "Lý Thường Kiệt", "Lý Bí"], answer: "Triệu Thị Trinh" },
+    { id: 8, question: "Thành Cổ Loa được xây dựng bởi ai?", options: ["An Dương Vương", "Triệu Đà", "Lý Công Uẩn"], answer: "An Dương Vương" },
+    { id: 9, question: "Chiến thắng nào đánh dấu sự kiện Ngô Quyền đánh bại quân Nam Hán?", options: ["Chiến thắng Bạch Đằng", "Chiến thắng Đống Đa", "Chiến thắng Chi Lăng"], answer: "Chiến thắng Bạch Đằng" },
+    { id: 10, question: "Vị tướng tài ba nào được gọi là 'Anh hùng áo vải Tây Sơn'?", options: ["Quang Trung", "Ngô Quyền", "Trần Hưng Đạo"], answer: "Quang Trung" },
+    { id: 11, question: "Ai là người viết bản Tuyên ngôn độc lập đầu tiên của Việt Nam?", options: ["Nguyễn Trãi", "Hồ Chí Minh", "Phan Bội Châu"], answer: "Nguyễn Trãi" },
+    { id: 12, question: "Trận Điện Biên Phủ năm 1954 do ai chỉ huy?", options: ["Võ Nguyên Giáp", "Trần Hưng Đạo", "Nguyễn Huệ"], answer: "Võ Nguyên Giáp" },
+    { id: 13, question: "Thời kỳ Bắc thuộc kéo dài bao nhiêu năm?", options: ["1000 năm", "900 năm", "500 năm"], answer: "1000 năm" },
+    { id: 14, question: "Ai là người sáng lập nhà Trần?", options: ["Trần Thái Tông", "Trần Thủ Độ", "Trần Nhân Tông"], answer: "Trần Thái Tông" },
+    { id: 15, question: "Chiến thắng nào đánh dấu sự sụp đổ của quân đội Pháp tại Việt Nam?", options: ["Điện Biên Phủ", "Chi Lăng", "Bạch Đằng"], answer: "Điện Biên Phủ" },
+    { id: 16, question: "Văn miếu Quốc Tử Giám được xây dựng vào triều đại nào?", options: ["Nhà Lý", "Nhà Trần", "Nhà Lê"], answer: "Nhà Lý" },
+    { id: 17, question: "Người lãnh đạo cuộc khởi nghĩa Lam Sơn là ai?", options: ["Lê Lợi", "Nguyễn Huệ", "Ngô Quyền"], answer: "Lê Lợi" },
+    { id: 18, question: "Triều đại nào đưa Việt Nam trở thành nước hùng mạnh nhất Đông Nam Á?", options: ["Nhà Lê", "Nhà Trần", "Nhà Nguyễn"], answer: "Nhà Trần" },
+    { id: 19, question: "Câu nói 'Nam quốc sơn hà' được ai viết?", options: ["Lý Thường Kiệt", "Trần Hưng Đạo", "Nguyễn Trãi"], answer: "Lý Thường Kiệt" },
+    { id: 20, question: "Ai là người khởi xướng cuộc Cách mạng tháng Tám?", options: ["Hồ Chí Minh", "Võ Nguyên Giáp", "Nguyễn Ái Quốc"], answer: "Hồ Chí Minh" },
+    { id: 21, question: "Chiến thắng Đống Đa diễn ra vào dịp nào?", options: ["Tết Nguyên Đán", "Lễ Quốc Khánh", "Tết Trung Thu"], answer: "Tết Nguyên Đán" },
+    { id: 22, question: "Chiến thắng Chi Lăng thuộc triều đại nào?", options: ["Nhà Lê", "Nhà Trần", "Nhà Nguyễn"], answer: "Nhà Lê" },
+    { id: 23, question: "Trần Hưng Đạo được phong danh hiệu gì?", options: ["Hưng Đạo Vương", "Quang Trung", "Anh hùng Tây Sơn"], answer: "Hưng Đạo Vương" },
+    { id: 24, question: "Nguyễn Trãi là tác giả của tác phẩm nào?", options: ["Bình Ngô đại cáo", "Nam quốc sơn hà", "Hịch tướng sĩ"], answer: "Bình Ngô đại cáo" },
+    { id: 25, question: "Chiến thắng nào gắn liền với câu 'Phá cường địch báo hoàng ân'?", options: ["Bạch Đằng", "Chi Lăng", "Điện Biên Phủ"], answer: "Bạch Đằng" },
+    { id: 26, question: "Ngô Quyền đánh bại quân Nam Hán tại đâu?", options: ["Sông Bạch Đằng", "Đống Đa", "Chi Lăng"], answer: "Sông Bạch Đằng" },
+    { id: 27, question: "Triều đại cuối cùng của Việt Nam là gì?", options: ["Nhà Nguyễn", "Nhà Trần", "Nhà Lý"], answer: "Nhà Nguyễn" },
+    { id: 28, question: "Thời kỳ Hậu Lê kéo dài bao nhiêu năm?", options: ["360 năm", "260 năm", "200 năm"], answer: "360 năm" },
+    { id: 29, question: "Hồ Chí Minh đọc Tuyên ngôn Độc lập tại đâu?", options: ["Quảng trường Ba Đình", "Hà Nội", "Điện Biên Phủ"], answer: "Quảng trường Ba Đình" },
+    { id: 30, question: "Triều đại nào đánh dấu sự ra đời của đồng tiền Việt Nam?", options: ["Nhà Đinh", "Nhà Trần", "Nhà Nguyễn"], answer: "Nhà Đinh" },
+    { id: 31, question: "Đường Trường Sơn còn được gọi là gì?", options: ["Đường Hồ Chí Minh", "Đường chiến thắng", "Đường kháng chiến"], answer: "Đường Hồ Chí Minh" },
+    { id: 32, question: "Ai là tổng chỉ huy trong chiến dịch Hồ Chí Minh 1975?", options: ["Văn Tiến Dũng", "Võ Nguyên Giáp", "Nguyễn Chí Thanh"], answer: "Văn Tiến Dũng" },
+    { id: 33, question: "Cuộc chiến tranh chống Pháp diễn ra từ năm nào?", options: ["1946", "1945", "1954"], answer: "1946" },
+    { id: 34, question: "Ai là người lãnh đạo chiến dịch Biên giới Thu Đông 1950?", options: ["Võ Nguyên Giáp", "Trường Chinh", "Hồ Chí Minh"], answer: "Võ Nguyên Giáp" },
+    { id: 35, question: "Lê Lợi khởi nghĩa chống giặc Minh vào năm nào?", options: ["1418", "1428", "1407"], answer: "1418" },
+    { id: 36, question: "Quân Tây Sơn đánh bại quân Thanh vào dịp nào?", options: ["Tết Nguyên Đán", "Lễ Quốc Khánh", "Tết Trung Thu"], answer: "Tết Nguyên Đán" },
+    { id: 37, question: "Chiến thắng nào giải phóng hoàn toàn miền Nam?", options: ["Chiến dịch Hồ Chí Minh", "Điện Biên Phủ", "Chi Lăng"], answer: "Chiến dịch Hồ Chí Minh" },
+    { id: 38, question: "Bình Ngô Đại Cáo được viết vào thời kỳ nào?", options: ["Nhà Hậu Lê", "Nhà Trần", "Nhà Nguyễn"], answer: "Nhà Hậu Lê" },
+    { id: 39, question: "Trận đánh quyết định tại chiến dịch Điện Biên Phủ diễn ra ở đâu?", options: ["Cứ điểm Him Lam", "Đèo Pha Đin", "Bản Kéo"], answer: "Cứ điểm Him Lam" },
+    { id: 40, question: "Ai được phong làm Bình Tây Đại Nguyên Soái?", options: ["Trương Định", "Nguyễn Trung Trực", "Nguyễn Huệ"], answer: "Trương Định" },
+    { id: 41, question: "Cầu Hiền Lương bắc qua sông nào?", options: ["Sông Bến Hải", "Sông Hương", "Sông Gianh"], answer: "Sông Bến Hải" },
+    { id: 42, question: "Quân Pháp chính thức rút khỏi Việt Nam vào năm nào?", options: ["1954", "1956", "1957"], answer: "1956" },
+    { id: 43, question: "Chiến dịch Biên giới năm 1950 diễn ra ở đâu?", options: ["Cao Bằng", "Điện Biên", "Bắc Kạn"], answer: "Cao Bằng" },
+    { id: 44, question: "Thành phố nào được giải phóng đầu tiên trong chiến dịch Hồ Chí Minh?", options: ["Huế", "Đà Nẵng", "Quảng Trị"], answer: "Huế" },
+    { id: 45, question: "Ai được mệnh danh là 'Hùm Xám đường số 4'?", options: ["Đồng Sĩ Nguyên", "Phan Đình Giót", "Võ Thị Sáu"], answer: "Đồng Sĩ Nguyên" },
+    { id: 46, question: "Phong trào Xô Viết Nghệ Tĩnh diễn ra năm nào?", options: ["1930", "1931", "1932"], answer: "1930" },
+    { id: 47, question: "Hiệp định Paris 1973 được ký ở đâu?", options: ["Paris", "Geneva", "Hà Nội"], answer: "Paris" },
+    { id: 48, question: "Ngày miền Nam hoàn toàn giải phóng là ngày nào?", options: ["30/4/1975", "2/9/1975", "7/5/1975"], answer: "30/4/1975" },
+    { id: 49, question: "Chiến thắng Vạn Tường diễn ra ở tỉnh nào?", options: ["Quảng Ngãi", "Quảng Nam", "Đà Nẵng"], answer: "Quảng Ngãi" },
+    { id: 50, question: "Phong trào Cần Vương xuất hiện vào thời kỳ nào?", options: ["Chống Pháp", "Chống Mỹ", "Chống Nhật"], answer: "Chống Pháp" },
+    ];
+
+    const results = [];
+    const adminEmail = "quitntqs@gmail.com";
+
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        showQuiz();
+    });
+
+    function showQuiz() {
+        hideAll();
+        const quizForm = document.getElementById("quizForm");
+        quizForm.innerHTML = "";
+
+        const selectedQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 14);
+        selectedQuestions.forEach((q, index) => {
+            const div = document.createElement("div");
+            div.className = "mb-3";
+            div.innerHTML = `
+                <label>${index + 1}. ${q.question}</label>
+                ${q.options.map(opt => `<div><input type="radio" name="q${index}" value="${opt}"> ${opt}</div>`).join("")}
+            `;
+            quizForm.appendChild(div);
+        });
+
+        const predictionDiv = document.createElement("div");
+        predictionDiv.className = "mb-3";
+        predictionDiv.innerHTML = `
+            <label>15. Bạn dự đoán số người tham gia tuần này:</label>
+            <input type="number" class="form-control" name="prediction" required>
+        `;
+        quizForm.appendChild(predictionDiv);
+
+        document.getElementById("quiz").classList.remove("hidden");
+    }
+
+    function submitQuiz() {
+        const formData = new FormData(document.getElementById("quizForm"));
+        const answers = Array.from(formData.entries()).filter(([key]) => key.startsWith("q")).map(([_, val]) => val);
+        const prediction = formData.get("prediction");
+
+        let score = 0;
+        questions.slice(0, 14).forEach((q, index) => {
+            if (answers[index] === q.answer) score++;
+        });
+
+        const participant = {
+            name: document.getElementById("name").value,
+            dob: document.getElementById("dob").value,
+            unit: document.getElementById("unit").value,
+            phone: document.getElementById("phone").value,
+            score,
+            prediction,
+        };
+
+        results.push(participant);
+        alert(`Bạn trả lời đúng ${score}/15 câu.`);
+        goBack();
+    }
+
+    function showRules() {
+        hideAll();
+        document.getElementById("rules").classList.remove("hidden");
+    }
+
+    function showRegister() {
+        hideAll();
+        document.getElementById("register").classList.remove("hidden");
+    }
+
+    function showAdminLogin() {
+        hideAll();
+        document.getElementById("adminLogin").classList.remove("hidden");
+    }
+
+    document.getElementById("adminLoginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const email = document.getElementById("adminEmail").value;
+        if (email === adminEmail) {
+            showAdminResults();
+        } else {
+            alert("Email không hợp lệ!");
+        }
+    });
+
+    function showAdminResults() {
+        const resultsTable = document.getElementById("resultsTable");
+        resultsTable.innerHTML = "";
+
+        const totalParticipants = results.length;
+
+        results
+            .sort((a, b) => b.score - a.score || Math.abs(a.prediction - totalParticipants) - Math.abs(b.prediction - totalParticipants))
+            .forEach(result => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>${result.dob}</td>
+                    <td>${result.unit}</td>
+                    <td>${result.phone}</td>
+                    <td>${result.score}</td>
+                    <td>${result.prediction}</td>
+                `;
+                resultsTable.appendChild(row);
+            });
+
+        hideAll();
+        document.getElementById("adminResults").classList.remove("hidden");
+    }
+
+    function exportToExcel() {
+        let table = document.getElementById("resultsTable").outerHTML;
+        let file = new Blob([table], { type: "application/vnd.ms-excel" });
+        let url = URL.createObjectURL(file);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "ket_qua_thi.xlsx";
+        a.click();
+    }
+
+    function hideAll() {
+        document.querySelectorAll(".container > div").forEach(div => div.classList.add("hidden"));
+    }
+
+    function goBack() {
+        hideAll();
+        document.getElementById("home").classList.remove("hidden");
+    }
+</script>
+</body>
+</html>
